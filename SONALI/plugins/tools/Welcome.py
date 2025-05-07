@@ -3,7 +3,7 @@
 import os
 from PIL import ImageDraw, Image, ImageFont, ImageChops
 from pyrogram import *
-from pyrogram.types import *
+from pyrogram.types import ChatMemberUpdated
 from logging import getLogger
 from SONALI import app
 
