@@ -3,7 +3,7 @@ import os
 from PIL import ImageDraw, Image, ImageFont, ImageChops, Image
 from pyrogram import Client, filters, enums
 from pyrogram.types import *
-from pyrogram.handlers import ChatMemberUpdatedHandler
+from pyrogram.types import ChatMemberUpdated
 from pyrogram.errors import PeerIdInvalid
 from logging import getLogger
 from SONALI import app
