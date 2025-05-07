@@ -1,6 +1,5 @@
-#<<<<<<<<<<<<<<Krish>>>>>>>>>>>>>>#
 import os
-from PIL import ImageDraw, Image, ImageFont, ImageChops, Image
+from PIL import ImageDraw, Image, ImageFont, ImageChops
 from pyrogram import Client, filters, enums
 from pyrogram.types import *
 from pyrogram.types import ChatMemberUpdated
@@ -121,9 +120,11 @@ async def greet_user(_, member: ChatMemberUpdated):
         )
     except Exception as e:
         LOGGER.error(f"Welcome error: {e}")
-    try:
-        os.remove(welcome_img)
-        if os.path.exists(pic_path):
-            os.remove(pic_path)
-    except Exception:
-        pass
+    finally:
+        # Cleanup
+        try:
+            os.remove(welcome_img)
+            if os.path.exists(pic_path):
+                os.remove(pic_path)
+        except Exception as e:
+            LOGGER.error(f"Error cleaning up files: {e}")
