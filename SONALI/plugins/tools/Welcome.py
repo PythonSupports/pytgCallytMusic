@@ -1,7 +1,7 @@
 #<<<<<<<<<<<<<<Krish>>>>>>>>>>>>>>#
 #<<<<<<<<<<<<<<>>>>>>>>>>>>>>#
 import os
-from PIL import ImageDraw, Image, ImageFont, ImageChops, Image
+from PIL import ImageDraw, Image, ImageFont, ImageChops
 from pyrogram import *
 from pyrogram.types import *
 from logging import getLogger
@@ -44,6 +44,7 @@ def circle(pfp, size=(500, 500)):
     pfp.putalpha(mask)
     return pfp
 
+
 def welcomepic(pic, user, chatname, id, uname):
     background = Image.open("SONALI/assets/Kr.png")
     pfp = Image.open(pic).convert("RGBA")
@@ -51,13 +52,14 @@ def welcomepic(pic, user, chatname, id, uname):
     pfp = pfp.resize((1157, 1158))
     draw = ImageDraw.Draw(background)
     font = ImageFont.truetype('SONALI/assets/font.ttf', size=110)
+    welcome_font = ImageFont.truetype('SONALI/assets/font.ttf', size=60)
     draw.text((1800, 700), f'NAME: {user}', fill=(255, 255, 255), font=font)
     draw.text((1800, 830), f'ID: {id}', fill=(255, 255, 255), font=font)
     draw.text((1800, 965), f"USERNAME : {uname}", fill=(255, 255, 255), font=font)
-    background.paste(pfp, (391, 336), pfp)
-    path = f"downloads/welcome#{id}.png"
-    background.save(path)
-    return path
+    pfp_position = (391, 336)
+    background.paste(pfp, pfp_position, pfp)
+    background.save(f"downloads/welcome#{id}.png")
+    return f"downloads/welcome#{id}.png"
 
 @app.on_message(filters.command("swel") & ~filters.private)
 async def auto_state(_, message):
@@ -88,6 +90,7 @@ async def auto_state(_, message):
             await message.reply_text(usage)
     else:
         await message.reply("**sᴏʀʀʏ ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴇɴᴀʙʟᴇ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ!**")
+        
 
 @app.on_chat_member_updated(filters.group, group=-3)
 async def greet_group(_, member: ChatMemberUpdated):
@@ -106,17 +109,20 @@ async def greet_group(_, member: ChatMemberUpdated):
         )
     except AttributeError:
         pic = "AarohiX/assets/upic.png"
-    if temp.MELCOW.get(f"welcome-{member.chat.id}") is not None:
+    if (temp.MELCOW).get(f"welcome-{member.chat.id}") is not None:
         try:
             await temp.MELCOW[f"welcome-{member.chat.id}"].delete()
         except Exception as e:
             LOGGER.error(e)
     try:
-        welcomeimg = welcomepic(pic, user.first_name, member.chat.title, user.id, user.username)
+        welcomeimg = welcomepic(
+            pic, user.first_name, member.chat.title, user.id, user.username
+        )
         temp.MELCOW[f"welcome-{member.chat.id}"] = await app.send_photo(
             member.chat.id,
             photo=welcomeimg,
             caption=f"""
+
 ❣️𝐖ᴇʟᴄᴏᴍᴇ 𝐈ɴ 𝐍ᴇᴡ 𝐆ʀᴏᴜᴘ ❣️
 ➖➖➖➖➖➖➖➖➖➖➖➖
 🏘{member.chat.title}🥳
@@ -126,19 +132,35 @@ async def greet_group(_, member: ChatMemberUpdated):
 
 ┏━━━━━━━━━━━━━━━
 ┣ 𝟏 ➥ ᴅᴏɴᴛ ᴀʙᴜsɪɴɢ  👣
-┣ 𝟐 ➥ 💗𝐑ᴇsᴘᴇ𝐂ᴛ 𝐄ᴠᴇʀʏ 𝐁ᴏ𝐘 𝐅ᴇᴇʟɪɴ𝐆
+
+┣ 𝟐 ➥ 💗𝐑ᴇsᴘᴇ𝐂ᴛ 𝐄ᴠᴇʀ𝐘 𝐁ᴏ𝐘 𝐅ᴇᴇʟɪɴ𝐆
+
 ┣ 𝟑 ➥ ʟɪɴᴋ ɴᴏᴛ ᴀʟʟᴏᴡ 
+
 ┣ 𝟒 ➥ ᴅᴏɴᴛ sᴇɴᴅ ᴀᴅᴜʟᴛ sᴛᴜғғ
 ┗━━━━━━━━━━━━━━━━━      
 
 ❖𝐌ᴀᴅᴇ  𝐁ʏ [𝐊ʀɪsʜ 𝐌ᴜsɪᴄ](https://t.me/krishnetwork)
 """,
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("𝐀ᴅᴅ 𝐌ᴇ 𝐁ᴀʙʏ", url="https://t.me/syn_ixbot?startgroup=true")]])
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"𝐀ᴅᴅ 𝐌ᴇ 𝐁ᴀʙʏ", url=f"https://t.me/syn_ixbot?startgroup=true")]])
         )
     except Exception as e:
         LOGGER.error(e)
     try:
         os.remove(f"downloads/welcome#{user.id}.png")
         os.remove(f"downloads/pp{user.id}.png")
-    except Exception:
+    except Exception as e:
         pass
+
+@app.on_message(filters.new_chat_members & filters.group, group=-1)
+async def bot_wel(_, message):
+    for u in message.new_chat_members:
+        if u.id == app.me.id:
+            await app.send_message(LOG_CHANNEL_ID, f"""
+NEW GROUP
+➖➖➖➖➖➖➖➖➖➖➖➖
+NAME: {message.chat.title}
+ID: {message.chat.id}
+USERNAME: @{message.chat.username}
+➖➖➖➖➖➖➖➖➖➖➖➖
+""")
